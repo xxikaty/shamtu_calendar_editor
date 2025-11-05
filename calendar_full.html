@@ -285,6 +285,8 @@ const DEFAULT_DATA = Array.from({length:25}, ()=>EMPTY_DAY());
 
 let data = structuredClone(DEFAULT_DATA);
 let currentDayIndex = 0;
+let isLocalSave = false;
+
 
 /* ===== DOM ===== */
 const statusEl  = document.getElementById('status');
@@ -560,12 +562,14 @@ function flashDay(index){
 
 /* ===== ПОДПИСКА НА ДАННЫЕ И ПЕРВИЧНЫЙ РЕНДЕР ===== */
 if (firebaseOk){
-  db.ref('/calendar').on('value', snap=>{
-    const val = snap.val();
-    data = (val && Array.isArray(val) && val.length===25) ? val : structuredClone(DEFAULT_DATA);
-    renderEditor();
-    showStatus('Данные загружены');
-  }, err=>{
+ db.ref('/calendar').on('value', snap=>{
+  if (isLocalSave) return; // пропускаем, если данные пришли после нашего автосохранения
+  const val = snap.val();
+  data = (val && Array.isArray(val) && val.length===25) ? val : structuredClone(DEFAULT_DATA);
+  renderEditor();
+  showStatus('Данные обновлены');
+},
+ err=>{
     console.warn(err); showStatus('Ошибка загрузки из Firebase');
   });
 } else {
@@ -573,16 +577,28 @@ if (firebaseOk){
   showStatus('Firebase недоступен');
 }
 
+let autoSaveTimer = null;
 function autoSave() {
   if (!firebaseOk) return;
-  db.ref('/calendar').set(data)
-    .then(() => showStatus('Автосохранение выполнено'))
-    .catch(() => showStatus('Ошибка автосохранения'));
+
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(() => {
+    isLocalSave = true; // помечаем, что сейчас сохраняем мы
+    db.ref('/calendar').set(data)
+      .then(() => {
+        showStatus('Автосохранено');
+        // сбрасываем флаг через секунду, чтобы успел отработать ответ Firebase
+        setTimeout(() => isLocalSave = false, 1000);
+      })
+      .catch(() => showStatus('Ошибка автосохранения'));
+  }, 1500); // задержка между вводом и сохранением
+
 }
 
 </script>
 </body>
 </html>
+
 
 
 
