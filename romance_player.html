@@ -19,15 +19,16 @@ body{margin:0;background:var(--bg);font-family:ui-sans-serif,system-ui,-apple-sy
 .imgbox{border-radius:14px;overflow:hidden;position:relative}
 .imgbox img {
   display: block;
-  width: 100%;
-  height: auto;
-  max-width: 100%;
-  object-fit: cover;
+  width: var(--img-width, 430px);   /* 👈 ты задаёшь нужную ширину */
+  height: var(--img-height, 450px); /* 👈 и нужную высоту */
+  object-fit: contain;              /* 👈 не искажает, сохраняет пропорции */
+  background: #000;                 /* 👈 добавит фон, если картинка меньше */
   border-radius: 14px;
   opacity: .98;
   filter: saturate(.95);
   margin: 0 auto;
 }
+
 
 .badge{position:absolute;top:10px;left:10px;font-size:12px;background:#fff8ef;border:1px solid #eadfcc;border-radius:999px;padding:4px 8px;color:#6c5b3d}
 
@@ -151,5 +152,6 @@ db.ref('/romance/state').on('value', snap=>{
 </script>
 </body>
 </html>
+
 
 
