@@ -79,14 +79,18 @@
     margin:0 auto;
   }
   /* === форма === */
-  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .c-controls{display:grid;gap:10px}
-  input[type=text]{
-    width:100%;padding:8px 10px;
-    border:1px solid var(--ring);
-    border-radius:10px;
-    background:#fff;
-  }
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.c-controls{display:grid;gap:6px}
+input[type=text]{
+  width:100%;
+  box-sizing:border-box;   /* чтобы не вылезали за ячейки */
+  padding:6px 8px;         /* поменьше высота */
+  font-size:13px;          /* компактнее текст */
+  border:1px solid var(--ring);
+  border-radius:8px;       /* чуть меньше скругление */
+  background:#fff;
+}
+
   .c-btn{
     appearance:none;
     cursor:pointer;
@@ -143,7 +147,7 @@ function updatePreview(){
   pics.forEach((id,i)=>{
     const url=g(inputs[i]).value.trim();
     const img=g(id);
-    img.src=url||'';
+    img.src = url ? url + (url.includes('?') ? '&' : '?') + 't=' + Date.now() : '';
   });
   capOut.textContent=capIn.value.trim()||'Надпись о том, как это всё красиво';
 }
@@ -153,12 +157,15 @@ inputs.map(id=>g(id)).forEach(el=>el.addEventListener('input',updatePreview));
 capIn.addEventListener('input',updatePreview);
 
 function loadImage(url){
-  return new Promise((res,rej)=>{
-    const img=new Image();
-    img.crossOrigin='anonymous';
-    img.onload=()=>res(img);
-    img.onerror=()=>rej();
-    img.src=url;
+  return new Promise((res, rej)=>{
+    if(!url) return rej();
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = ()=>res(img);
+    img.onerror = ()=>rej();
+    // анти-кэш: добавляем уникальный параметр
+    const ts = 't=' + Date.now();
+    img.src = url + (url.includes('?') ? '&' : '?') + ts;
   });
 }
 
