@@ -86,14 +86,16 @@ button.danger{color:#8d4141}
 <script>
 /*** 1) КОНФИГ  ***/
 const firebaseConfig = {
-  apiKey: "PASTE",
-  authDomain: "PASTE",
-  databaseURL: "PASTE",
-  projectId: "PASTE",
-  storageBucket: "PASTE",
-  messagingSenderId: "PASTE",
-  appId: "PASTE"
+  apiKey: "AIzaSyAJu-CECLKqonJxdywNFPDOuoZmvBef6Dc",
+  authDomain: "forum-calendar-shamtu.firebaseapp.com",
+  databaseURL: "https://forum-calendar-shamtu-default-rtdb.firebaseio.com",
+  projectId: "forum-calendar-shamtu",
+  storageBucket: "forum-calendar-shamtu.firebasestorage.app",
+  messagingSenderId: "705851712133",
+  appId: "1:705851712133:web:a9ff4d79e40aad9acc7fec",
+  measurementId: "G-SFSTXVF32Y"
 };
+  
 /*** 2) INIT ***/
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
@@ -273,3 +275,4 @@ db.ref('/romance/scenes').on('value', snap=>{
 </script>
 </body>
 </html>
+
